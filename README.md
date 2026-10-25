@@ -136,6 +136,18 @@ by an incremental update with the visible stamp and a JSON annex carrying the
 post-stamp hash and RFC 3161 / OpenTimestamps proofs (*not after*). Verify
 with [`verificar_ssjf.py`](verificar_ssjf.py). Full spec: [SSJF_v1.md](SSJF_v1.md).
 
+## Pruebas
+
+[`pruebas/`](pruebas/) tiene vectores reales generados por Navaja: una firma
+válida, QR alterado, firma del sello alterada, QR reutilizado con otro sello,
+firma del sello quitada, cambio posterior, formato 1.0 e historial (íntegro y
+alterado). Se ejecutan en cada cambio:
+
+```sh
+pip install cryptography
+python3 -m unittest discover -s pruebas -v
+```
+
 ## Implementaciones
 
 - [Navaja](https://github.com/Josexato/navaja) (Android, Java): firma con S Pen, clave en StrongBox/TEE, historial y respaldo. Código en `app/src/main/java/com/josexato/navaja/sign/core/`.
