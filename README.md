@@ -22,6 +22,21 @@ El QR contiene:
 La parte antes de `#` es sólo esta página; el resto (el fragmento) no se envía
 a ningún servidor al abrir el enlace.
 
+## Cómo se firma
+
+<p align="center"><img src="diagramas/01-firma.svg" alt="Proceso de firma SSJF" width="420"></p>
+
+1. Se calcula el resumen `h0` del PDF **tal como llegó** y se firma junto con
+   la hora y el último bloque de Bitcoin: eso es el QR (firma 1).
+2. Se dibujan la firma manuscrita y el QR en una actualización al final del
+   archivo (`D1`), y se firma también su resumen `h1` (firma 2, `seal_sig`).
+3. Sólo `h1` viaja a los sellos de tiempo (RFC 3161 y OpenTimestamps).
+4. Todo se guarda en un anexo al final (`D2`) y en el historial del firmante.
+
+El original nunca se toca: queda byte a byte al inicio del archivo firmado.
+
+<p align="center"><img src="diagramas/02-estructura-pdf.svg" alt="Estructura del PDF firmado" width="380"></p>
+
 ## Qué prueba y qué no
 
 - ✓ **Integridad**: si cambia un solo bit del documento firmado, el resumen no coincide.
@@ -33,6 +48,8 @@ a ningún servidor al abrir el enlace.
 - ✗ No es una firma electrónica "calificada" en el sentido legal de ninguna jurisdicción; es una prueba técnica.
 
 ## Cómo verificar
+
+<p align="center"><img src="diagramas/03-verificacion.svg" alt="Árbol de verificación" width="560"></p>
 
 ### Con el PDF firmado
 
@@ -91,6 +108,8 @@ FreeTSA están en <https://freetsa.org/index_en.php>.
 
 ## Quien firma tiene un historial
 
+<p align="center"><img src="diagramas/04-historial-claves.svg" alt="Historial encadenado y cambio de clave" width="400"></p>
+
 La app que firma (por ejemplo [Navaja](https://github.com/Josexato/navaja), app Android) guarda un **historial
 encadenado** de todas sus firmas: cada entrada incluye el resumen de la
 anterior, así que no se puede borrar ni insertar una firma sin que se note.
@@ -135,6 +154,16 @@ original file byte-for-byte (`head -c n signed.pdf | sha256sum` = `h`), followed
 by an incremental update with the visible stamp and a JSON annex carrying the
 post-stamp hash and RFC 3161 / OpenTimestamps proofs (*not after*). Verify
 with [`verificar_ssjf.py`](verificar_ssjf.py). Full spec: [SSJF_v1.md](SSJF_v1.md).
+
+## Diagramas
+
+Hechos con [AlmaGag](https://github.com/Josexato/AlmaGag). La fuente editable
+de cada uno está junto a su SVG en [`diagramas/`](diagramas/):
+
+```sh
+pip install -e git+https://github.com/Josexato/AlmaGag.git#egg=AlmaGag
+almagag diagramas/01-firma.gag -o diagramas/01-firma.svg
+```
 
 ## Pruebas
 
